@@ -94,12 +94,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   bool sendKeypress = true;
 
   switch (keycode) {
-    case COLEMAK:
-      if (record->event.pressed) {
-        layer_off(_QWERTY);
-      }
-      sendKeypress = false;
-      break;
     case QWERTY:
       if (record->event.pressed) {
         layer_invert(_QWERTY);
