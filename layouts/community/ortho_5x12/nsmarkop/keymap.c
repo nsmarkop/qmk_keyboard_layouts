@@ -23,7 +23,8 @@ enum custom_keycodes {
   RAISE,
   ADJUST,
   MIDI,
-  FOURTHS
+  FOURTHS_ON,
+  FOURTHS_OFF
   // TODO: SERIAL
 };
 
@@ -62,15 +63,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 [_ADJUST] = KEYMAP(
-  RESET,   MAGIC_TOGGLE_NKRO, _______, _______, _______, _______,    _______, _______, _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, FOURTHS, _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, MIDI,    QWERTY,  KC_RALT, KC_RCTRL, _______,
-  _______, _______,           _______, _______, _______, _______,    _______, _______, _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, _______, _______, _______, _______,  _______
+  RESET,   MAGIC_TOGGLE_NKRO, _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, FOURTHS_ON, _______, _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, MIDI,       QWERTY,  KC_RALT, KC_RCTRL, _______,
+  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______
 ),
 
-// NOTE: At this point in time, QMK's MIDI values are 2 off from what they actually output
-//       for some reason. May have to look into some of the MIDI_ADVANCED config for that
+// NOTE: At this point in time, QMK's MIDI values are 2 off from what they actually
+//       output for some reason. Octave shifts are taken care of automatically during
+//       layer switching.
 
 [_MIDI] = KEYMAP(
   MI_C,   MI_Cs,   MI_D,   MI_Ds,   MI_E,   MI_F,      MI_Fs,   MI_G,   MI_Gs,   MI_A,   MI_As,   MI_B,
@@ -85,7 +87,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   MI_Gs_2, MI_A_2,  MI_As_2, MI_B_2,  MI_C_3, MI_Cs_3,    MI_D_3, MI_Ds_3, MI_E_3,  MI_F_3,  MI_Fs_3, MI_G_3,
   MI_Ds_2, MI_E_2,  MI_F_2,  MI_Fs_2, MI_G_2, MI_Gs_2,    MI_A_2, MI_As_2, MI_B_2,  MI_C_3,  MI_Cs_3, MI_D_3,
   MI_As_1, MI_B_1,  MI_C_2,  MI_Cs_2, MI_D_2, MI_Ds_2,    MI_E_2, MI_F_2,  MI_Fs_2, MI_G_2,  MI_Gs_2, MI_A_2,
-  MI_F_1,  MI_Fs_1, MI_G_1,  MI_Gs_1, MI_A_1, MI_As_1,    MI_B_1, MI_C_2,  MI_Cs_2, MI_D_2,  MI_Ds_2, FOURTHS
+  MI_F_1,  MI_Fs_1, MI_G_1,  MI_Gs_1, MI_A_1, MI_As_1,    MI_B_1, MI_C_2,  MI_Cs_2, MI_D_2,  MI_Ds_2, FOURTHS_OFF
 )
 
 // TODO:
@@ -147,9 +149,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       sendKeypress = false;
       break;
-    case FOURTHS:
+    case FOURTHS_ON:
       if (record->event.pressed) {
-        layer_invert(_FOURTHS);
+        // Account for QMK being 2 octaves too high
+        midi_config.octave = midi_config.octave - 2;
+        layer_on(_FOURTHS);
+      }
+      sendKeypress = false;
+      break;
+    case FOURTHS_OFF:
+      if (record->event.pressed) {
+        // Account for QMK being 2 octaves too high
+        midi_config.octave = midi_config.octave + 2;
+        layer_off(_FOURTHS);
       }
       sendKeypress = false;
       break;
