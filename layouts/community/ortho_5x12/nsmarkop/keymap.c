@@ -13,7 +13,9 @@ enum custom_layers {
   _RAISE,
   _ADJUST,
   _MIDI,
-  _FOURTHS
+  _FOURTHS,
+  _WHEATSTONE_PULL,
+  _WHEATSTONE_PUSH
   // TODO: _SERIAL
 };
 
@@ -24,7 +26,9 @@ enum custom_keycodes {
   ADJUST,
   MIDI,
   FOURTHS_ON,
-  FOURTHS_OFF
+  FOURTHS_OFF,
+  ANGLO_ON,
+  ANGLO_OFF,
   // TODO: SERIAL
 };
 
@@ -63,16 +67,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 [_ADJUST] = KEYMAP(
-  RESET,   MAGIC_TOGGLE_NKRO, _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, FOURTHS_ON, _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, MIDI,       QWERTY,  KC_RALT, KC_RCTRL, _______,
-  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______,
-  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______, _______, _______,  _______
+  RESET,   MAGIC_TOGGLE_NKRO, _______, _______, _______, _______,    _______, _______,    _______,  _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, FOURTHS_ON, ANGLO_ON, _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, MIDI,       QWERTY,   KC_RALT, KC_RCTRL, _______,
+  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______,  _______, _______,  _______,
+  _______, _______,           _______, _______, _______, _______,    _______, _______,    _______,  _______, _______,  _______
 ),
 
-// NOTE: At this point in time, QMK's MIDI values are 2 off from what they actually
+// TODO: At this point in time, QMK's MIDI values are 2 off from what they actually
 //       output for some reason. Octave shifts are taken care of automatically during
-//       layer switching.
+//       layer switching for why I care about them
 
 [_MIDI] = KEYMAP(
   MI_C,   MI_Cs,   MI_D,   MI_Ds,   MI_E,   MI_F,      MIDI,    MI_G,   MI_Gs,   MI_A,   MI_As,   MI_B,
@@ -88,6 +92,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   MI_Ds_2, MI_E_2,  MI_F_2,  MI_Fs_2, MI_G_2, MI_Gs_2,    MI_A_2, MI_As_2, MI_B_2,  MI_C_3,  MI_Cs_3, MI_D_3,
   MI_As_1, MI_B_1,  MI_C_2,  MI_Cs_2, MI_D_2, MI_Ds_2,    MI_E_2, MI_F_2,  MI_Fs_2, MI_G_2,  MI_Gs_2, MI_A_2,
   MI_F_1,  MI_Fs_1, MI_G_1,  MI_Gs_1, MI_A_1, MI_As_1,    MI_B_1, MI_C_2,  MI_Cs_2, MI_D_2,  MI_Ds_2, FOURTHS_OFF
+),
+
+// TODO: Need to make these the correct octave values of the notes
+// TODO: Also need to try and get layer switching to switch the key that's being
+//       pressed to the one on the new layer when the switch happens to really
+//       simulate how the concertina or any diatonic instrument works
+[_WHEATSTONE_PULL] = KEYMAP(
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,              XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  MI_F_1,  MI_Bb_1, MI_Ds_1, MI_G_1,  MI_Bb_1, XXXXXXX,    XXXXXXX,              MI_Ds_1, MI_G_1,  MI_Bb_1, MI_Ds_1, MI_F_1,
+  MI_G_1,  MI_B_1,  MI_D_1,  MI_F_1,  MI_A_1,  XXXXXXX,    XXXXXXX,              MI_B_1,  MI_D_1,  MI_F_1,  MI_A_1,  MI_B_1,
+  MI_A_1,  MI_Fs_1, MI_A_1,  MI_C_1,  MI_E_1,  XXXXXXX,    XXXXXXX,              MI_Fs_1, MI_A_1,  MI_C_1,  MI_E_1,  MI_Fs_1,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    MO(_WHEATSTONE_PUSH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ANGLO_OFF
+),
+
+[_WHEATSTONE_PUSH] = KEYMAP(
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  MI_E_1,  MI_A_1,  MI_Cs_1, MI_A_1,  MI_Gs_1, XXXXXXX,    XXXXXXX, MI_Cs_1, MI_A_1,  MI_Gs_1, MI_Cs_1, MI_A_1,
+  MI_C_1,  MI_G_1,  MI_C_1,  MI_E_1,  MI_G_1,  XXXXXXX,    XXXXXXX, MI_C_1,  MI_E_1,  MI_G_1,  MI_C_1,  MI_E_1,
+  MI_B_1,  MI_D_1,  MI_G_1,  MI_B_1,  MI_D_1,  XXXXXXX,    XXXXXXX, MI_G_1,  MI_B_1,  MI_D_1,  MI_G_1,  MI_B_1,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
 )
 
 // TODO:
@@ -162,6 +186,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Account for QMK being 2 octaves too high
         midi_config.octave = midi_config.octave + 2;
         layer_off(_FOURTHS);
+      }
+      sendKeypress = false;
+      break;
+    case ANGLO_ON:
+      if (record->event.pressed) {
+        // Account for QMK being 2 octaves too high
+        midi_config.octave = midi_config.octave - 2;
+        layer_on(_WHEATSTONE_PULL);
+      }
+      sendKeypress = false;
+      break;
+    case ANGLO_OFF:
+      if (record->event.pressed) {
+        // Account for QMK being 2 octaves too high
+        midi_config.octave = midi_config.octave + 2;
+        layer_off(_WHEATSTONE_PULL);
       }
       sendKeypress = false;
       break;
