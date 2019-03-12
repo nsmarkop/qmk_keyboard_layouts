@@ -9,8 +9,8 @@
 // #define USE_I2C
 
 // Hand configuration
-#define MASTER_LEFT
-// #define MASTER_RIGHT
+// #define MASTER_LEFT
+#define MASTER_RIGHT
 // #define EE_HANDS
 
 // Enable features
